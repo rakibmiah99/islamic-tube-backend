@@ -82,4 +82,31 @@ class Helper
             return 'https://practice-api.sakibul-islam.xyz';
         }
     }
+
+    static public function OpenSSLEncrypt($data)
+    {
+        $key = env('CUSTOM_ENCRYPTION_KEY'); // Custom key (can be stored in .env)
+        $cipher = "aes-256-cbc";  // Cipher method (AES-256-CBC is commonly used)
+
+        $iv = substr(hash('sha256', $key), 0, 16); // Initialization Vector (16 bytes)
+
+        // Encrypting the data
+        $encrypted = openssl_encrypt($data, $cipher, $key, 0, $iv);
+
+        return $encrypted;
+    }
+
+    public static function OpenSSLDecrypt($encryptedData)
+    {
+        $key = env('CUSTOM_ENCRYPTION_KEY'); // Custom key
+        $cipher = "aes-256-cbc";
+
+        $iv = substr(hash('sha256', $key), 0, 16);  // Initialization Vector (16 bytes)
+
+        // Decrypting the data
+        $decrypted = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
+
+        return $decrypted;
+    }
+
 }
