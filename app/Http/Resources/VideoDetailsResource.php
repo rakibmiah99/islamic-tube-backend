@@ -22,10 +22,11 @@ class VideoDetailsResource extends JsonResource
             'thumbnail' => $this->thumbnail,
             'description' => $this->description,
             'long_description' => $this->long_description,
-            'video_url' => $this->video_url,
+            'video_id' => $this->video_id,
             'provider' => $this->provider,
             'published_at' => $this->published_at,
             'watch_count' => (integer)$this->watch_counts_sum_watch_count,
+            'likes_count' => (integer)$this->likes_count,
             'related_videos' => [
                 'token' => $related_videos['token'],
                 'data' => VideoResource::collection($related_videos['data'])

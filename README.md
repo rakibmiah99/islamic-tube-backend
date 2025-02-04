@@ -1,66 +1,244 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Get All Videos Api 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### **API Endpoint: Get All Videos**
 
-## About Laravel
+#### **URL**
+`GET /api/videos`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### **Request Parameters**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Parameter | Type   | Description                          | Default |
+|-----------|--------|--------------------------------------|---------|
+| `limit`   | integer| Number of videos to retrieve.        | 24      |
+| `offset`  | integer| Starting point for pagination.       | 0       |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+#### **Response**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Status Code:** `200 OK`
+- **Response Body:**
+```json
+  {
+    "status": "success",
+    "message": "",
+    "figure": {
+        "next_load": "http://127.0.0.1:8000/api/videos?offset=24",
+        "query": {
+            "limit": "24",
+            "current_offset": "0",
+            "next_offset": 24
+        },
+        "data": [
+            {
+                "title": "সূরা আল ফুরকান (سورة الفرقان) - সত্য মিথ্যার পার্থক্য নির্ধারণকারী",
+                "slug": "et-quibusdam-voluptatem-nulla-in-voluptatem-possimus",
+                "thumbnail": "https://thumbs.dreamstime.com/b/islamic-themed-youtube-thumbnail-modern-traditional-elements-engaging-backgrounds-beautiful-high-quality-youtube-340012414.jpg",
+                "watch_count": 28,
+                "published_at": "2019-04-21 14:14:42"
+            },
+            ...,
+            ...
+        ]
+    }
+}
+  ```
+  
+  
+### **API Endpoint: Video Details**
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### **URL**
+`GET /api/video/{slug}`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+#### **Response**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Status Code:** `200 OK`
+- **Response Body:**
+```json
+  {
+    "status": "success",
+    "message": "",
+    "figure": {
+        "title": "সূরা আল ফুরকান (سورة الفرقان) - সত্য মিথ্যার পার্থক্য নির্ধারণকারী",
+        "slug": "et-quibusdam-voluptatem-nulla-in-voluptatem-possimus",
+        "thumbnail": "https://thumbs.dreamstime.com/b/islamic-themed-youtube-thumbnail-modern-traditional-elements-engaging-backgrounds-beautiful-high-quality-youtube-340012414.jpg",
+        "description": null,
+        "long_description": "Impedit et inventore sapiente ad aspernatur earum eius occaecati assumenda ipsum labore recusandae expedita qui nobis sint unde enim velit eligendi laborum perspiciatis facilis ad et enim qui dolor ab dolor quia repudiandae quos aut occaecati dolores ratione molestiae asperiores magnam aliquam fugiat omnis aspernatur libero omnis accusamus hic magni deleniti est sint molestiae porro voluptatem quidem officia sunt nostrum veniam qui omnis voluptate recusandae fugiat excepturi voluptas assumenda numquam ea a dolorum dignissimos odit maxime expedita quo eum illum et doloremque qui aut adipisci ea occaecati rerum fugit ullam consectetur similique enim autem asperiores nam esse ducimus voluptatem et voluptas omnis laborum possimus exercitationem eos omnis debitis reprehenderit ut voluptas sit ipsam cumque laboriosam possimus sint velit ea ut nostrum distinctio voluptatibus quis perferendis praesentium consequatur tempora libero id ex et architecto minus ut soluta est sed illum saepe odit ratione voluptate in ut velit dolorem nam qui delectus eligendi dolorum earum ducimus voluptas quo quaerat provident quo magni rerum minus ea quia quis consequatur qui quo id maiores dolorem non omnis sint occaecati repudiandae ducimus repellendus eligendi consequatur praesentium iusto distinctio sunt impedit fuga commodi impedit tenetur fuga delectus veniam nobis voluptatem occaecati et veritatis quos voluptatem aut cumque aspernatur aut distinctio neque quasi vel iure quisquam commodi nihil ut alias non expedita aliquam illo rerum magni incidunt itaque voluptates sapiente sint consectetur fuga laborum ut nulla laboriosam accusamus consequatur et quaerat dolorem qui ex esse asperiores quam et unde quae dolor commodi rerum et dolores quos excepturi ut et modi est tenetur dolores labore quis labore debitis voluptatem eaque eaque fugiat consequatur error nihil unde quisquam aut et quos temporibus est earum non earum et nobis non iure ullam iste quia saepe et commodi quisquam sint dolore esse rerum quod minima consequatur et unde non quia qui fuga placeat voluptas facere consequatur necessitatibus sit dolor animi exercitationem vitae itaque excepturi ab distinctio iure ducimus ipsum esse doloremque et quo rerum necessitatibus numquam tempore placeat consequatur et et in expedita neque rerum ea optio sint corrupti repudiandae inventore est similique accusamus non sapiente ab assumenda adipisci cum amet ipsum quia fuga adipisci est doloremque sunt id error asperiores suscipit et ut facere pariatur sed id et sunt iste pariatur et saepe rerum amet quod facere quos iure natus facilis suscipit fugit sequi aperiam magni magnam assumenda sit fugit qui provident quia nesciunt aperiam perferendis aut.",
+        "video_url": "https://www.youtube.com/watch?v=fRaURh6Fjq4",
+        "provider": "youtube",
+        "published_at": "2019-04-21 14:14:42",
+        "watch_count": 28,
+        "related_videos": {
+            "token": "zDlpPdbfKyF9rdT--QhAr6mYR9o3Ewv0eicgL5h54vk4=",
+            "data": [
+                {
+                    "title": "এ আলোচনাটি আপনার নামাজ সম্পর্কে ধারণা বদলে দিতে পারে!",
+                    "slug": "numquam-accusantium-non-dolorum-ipsa-a-assumenda",
+                    "thumbnail": "https://static.vecteezy.com/system/resources/previews/035/380/973/non_2x/ai-generated-an-extravagant-brown-and-gold-background-with-intricate-geometric-designs-free-photo.jpg",
+                    "watch_count": 30,
+                    "published_at": "2000-10-07 13:28:13"
+                },
+                ...,
+                ...,
+            ]
+        },
+        "comments": {
+            "token": "V5CDjnkWAv6e7v0RlE3--jA==",
+            "data": [
+                {
+                    "id": 801,
+                    "body": "Facere tenetur distinctio ut totam.",
+                    "user": {
+                        "name": "Vesta Moore"
+                    }
+                },
+                ...,
+                ...
+            ]
+        }
+    }
+  }
+``` 
 
-### Premium Partners
+### **Load More Related Videos**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+#### **URL**
+`GET /api/video/{token}/more-related`
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### **Response**
 
-## Code of Conduct
+- **Status Code:** `200 OK`
+- **Response Body:**
+```json
+  {
+    "status": "success",
+    "message": "",
+    "figure": {
+        "token": "zDlpPdbfKyF9rdT--QhAr6scJ21R1j9TOoppSpqEQUSQ=",
+        "data": [
+            {
+                "title": "বিপদের পরিক্ষিত ৪টি দোয়া,পড়লে আল্লাহর গায়েবী সাহায্য পাবেন",
+                "slug": "et-culpa-sit-ut-soluta-quasi-dolor-quo",
+                "thumbnail": "https://img.freepik.com/premium-vector/youtube-thumbnail-islamic-new-year-celebration_23-2150428737.jpg",
+                "watch_count": 13,
+                "published_at": "2003-10-14 10:30:15"
+            },
+            ...,
+            ...
+        ]
+    }
+  }
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### **Load More Comments**
 
-## Security Vulnerabilities
+#### **URL**
+`GET /api/video/{token}/more-comments`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+#### **Response**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Status Code:** `200 OK`
+- **Response Body:**
+```json
+  {
+    "status": "success",
+    "message": "",
+    "figure": {
+        "token": "fo1kvbPuBH005vSy9OHqIw==",
+        "data": [
+            {
+                "id": 816,
+                "body": "Sed ipsa illum dolor asperiores rem.",
+                "user": {
+                    "name": "Weston Nicolas"
+                }
+            },
+            ...,
+            ...
+        ]
+    }
+  }
+```
+
+
+Here’s a well-structured API request documentation in a clean and readable format:
+
+---
+
+## **Create Comment In Video API**
+
+### **Endpoint**
+`POST /video/{slug}/comment`
+
+### **Description**
+This API allows users to post a comment on a video using its unique `slug`.
+
+---
+
+### **Headers**
+
+| **Key**             | **Value**                          | **Required** |
+|---------------------|----------------------------------|-------------|
+| `Content-Type`     | `application/json`               | ✅          |
+| `Authorization`    | `Bearer YOUR_ACCESS_TOKEN`       | ✅          |
+
+### **Request Body**
+
+| **Parameter** | **Type**  | **Description**         | **Required** |
+|--------------|----------|-------------------------|-------------|
+| `body`       | `string` | The text of the comment | ✅          |
+
+#### **Example Request Body**
+```json
+{
+  "body": "This is a comment."
+}
+```
+
+---
+
+### **Fetch API Request Example**
+```js
+fetch("https://yourapi.com/video/{slug}/comment", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN"
+    },
+    body: JSON.stringify({
+        body: "This is a comment."
+    })
+}).then(response => response.json())
+  .then(data => console.log("Comment created:", data))
+  .catch(error => console.error("Error:", error));
+```
+
+---
+
+### **Response Example (Success)**
+```json
+{
+    "status": "success",
+    "message": "Comment created!",
+    "figure": {
+        "id": 5005,
+        "body": "this my first commet",
+        "user": {
+            "name": "MD Rakib Miah"
+        }
+    }
+}
+```
+
+### **Notes**
+- Replace `{slug}` in the URL with the actual video slug.
+- Ensure the request includes a valid **Bearer Token** for authentication.
+- If the token is missing or invalid, the request will return a **401 Unauthorized** error.
+
+---

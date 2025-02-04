@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VideoCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\VideoDetailsResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Comment;
 use App\Models\Video;
+use App\Models\VideoReaction;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 
@@ -42,6 +44,7 @@ class VideoController extends Controller
     {
         $video = Video::where('slug', $slug)
             ->withSum('watch_counts', 'watch_count')
+            ->withCount('likes')
             ->firstOrFail();
 
         $video_details = VideoDetailsResource::make($video);
@@ -75,6 +78,63 @@ class VideoController extends Controller
         return Helper::ApiResponse('', [
             'token' => Video::LoadMoreCommentPack(video_id: $meta_data->video_id, offset: $meta_data->next_offset),
             'data' => CommentResource::collection($comments),
+        ]);
+    }
+
+
+    function comment($slug, VideoCommentRequest $request)
+    {
+
+        $video = Video::where('slug', $slug)->select('id')->firstOrFail();
+        $video_id = $video->id;
+        $user_id = auth()->id();
+        $body = $request->input('body');
+        $comment = Comment::create([
+            'user_id' => $user_id,
+            'video_id' => $video_id,
+            'body' => $body,
+        ]);
+
+        $comment =  CommentResource::make($comment);
+        return Helper::ApiResponse('Comment created!', $comment);
+    }
+
+    public function like($slug)
+    {
+        $video = Video::where('slug', $slug)->withCount('likes')->firstOrFail();
+        $video_id = $video->id;
+        $user_id = auth()->id();
+        $condition = ['user_id' => $user_id, 'video_id' => $video_id];
+        $video_reaction = VideoReaction::where($condition)->first();
+        $reaction = 'l'; // l = like
+        if($video_reaction && $video_reaction?->reaction == 'l'){
+            $reaction = 'n'; // n = none
+        }
+
+        VideoReaction::updateOrCreate($condition, ['reaction' => $reaction]);
+
+        return Helper::ApiResponse('', [
+            'like' => $video_reaction->reaction === 'n',
+            'video_likes_count' => $video->likes_count,
+        ]);
+    }
+    public function dislike($slug)
+    {
+        $video = Video::where('slug', $slug)->withCount('likes')->firstOrFail();
+        $video_id = $video->id;
+        $user_id = auth()->id();
+        $condition = ['user_id' => $user_id, 'video_id' => $video_id];
+        $video_reaction = VideoReaction::where($condition)->first();
+        $reaction = 'd'; // l = like
+        if($video_reaction && $video_reaction?->reaction == 'd'){
+            $reaction = 'n'; // n = none
+        }
+
+        VideoReaction::updateOrCreate($condition, ['reaction' => $reaction]);
+
+        return Helper::ApiResponse('', [
+            'dislike' => $video_reaction->reaction === 'n',
+            'video_likes_count' => $video->likes_count,
         ]);
     }
 

@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('slug');
             $table->string('description')->nullable()->default(null);
             $table->string('thumbnail', 2000);
+            $table->string('thumbnail_md', 2000)->nullable()->default(null);
+            $table->string('thumbnail_sm', 2000)->nullable()->default(null);
             $table->longText('long_description')->nullable()->default(null);
             $table->string('provider');
-            $table->string('video_url')->nullable();
+            $table->string('video_id')->nullable();
             $table->dateTime('published_at')->nullable()->default(date('Y-m-d H:i:s'));
             $table->unique('slug', 'videos_slug_unique');
             $table->timestamps();

@@ -16,6 +16,18 @@ class Video extends Model
         return $this->hasMany(VideoWatchCount::class);
     }
 
+
+    public function likes()
+    {
+        return $this->hasMany(VideoReaction::class)->where('reaction', '=', 'l');
+    }
+
+    public function dislikes()
+    {
+        return $this->hasMany(VideoReaction::class)->where('reaction', 'd');
+    }
+
+
     public function comments()
     {
         return $this->hasMany(Comment::class);

@@ -13,12 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call('migrate:fresh');
+//        Artisan::call('migrate:fresh');
         $this->call(UserSeeder::class);
-        $this->call(VideoSeeder::class);
-        $this->call(Tag::class);
+//        $this->call(VideoSeeder::class);
+        $this->call(YoutubeSeeder::class);
+        $this->call(TagSeeder::class);
         $this->call(VideoTagSeeder::class);
         $this->call(VideoWatchCountSeeder::class);
         $this->call(CommentSeeder::class);
+        $this->call(VideoReactionSeeder::class);
     }
 }
