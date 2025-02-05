@@ -27,6 +27,9 @@ class VideoDetailsResource extends JsonResource
             'published_at' => $this->published_at,
             'watch_count' => (integer)$this->watch_counts_sum_watch_count,
             'likes_count' => (integer)$this->likes_count,
+            'comments_count' => (integer)$this->comments_count,
+            'like' => $this->user_reaction?->reaction == "l",
+            'dislike' => $this->user_reaction?->reaction == "d",
             'related_videos' => [
                 'token' => $related_videos['token'],
                 'data' => VideoResource::collection($related_videos['data'])

@@ -39,12 +39,42 @@ class VideoController extends Controller
         ]);
     }
 
+    public function search($text, Request $request)
+    {
+        $limit = 15;
+        $offset = 0;
+
+        try {
+            $token = $request->next_load_token;
+            $meta_data = Video::LoadMoreSearchUnPack($token);
+            $text = $meta_data->text;
+            $limit = $meta_data->limit;
+            $offset = $meta_data->next_offset;
+        }
+        catch (\Exception $e) {
+            //skip unpack error
+        }
+
+        $videos = Video::where('title', 'like', '%' . $text . '%')->withSum('watch_counts', 'watch_count');
+        $total_data = $videos->count('id');
+
+        $videos = $videos->limit($limit)->offset($offset)->get();
+
+
+        return Helper::ApiResponse('', [
+            'next_load_token' => $videos->count() == 0 ? false :  Video::LoadMoreSearchPack($text, $offset),
+            'total_data' => $total_data,
+            'data' => VideoResource::collection($videos),
+        ]);
+    }
+
 
     function videoDetail($slug)
     {
         $video = Video::where('slug', $slug)
             ->withSum('watch_counts', 'watch_count')
             ->withCount('likes')
+            ->withCount('comments')
             ->firstOrFail();
 
         $video_details = VideoDetailsResource::make($video);

@@ -22,6 +22,11 @@ class Video extends Model
         return $this->hasMany(VideoReaction::class)->where('reaction', '=', 'l');
     }
 
+    public function user_reaction()
+    {
+        return $this->belongsTo(VideoReaction::class, 'id', 'video_id')->where('user_id', '=', auth('sanctum')->id());
+    }
+
     public function dislikes()
     {
         return $this->hasMany(VideoReaction::class)->where('reaction', 'd');
@@ -109,6 +114,45 @@ class Video extends Model
         $meta_data = explode("@", $token);
         return (object)[
             'video_id' => json_decode($meta_data[0]),
+            'next_offset' => (integer)$meta_data[1],
+            'limit' => (integer)$meta_data[2],
+        ];
+    }
+
+    //decrypt token for next load related videos
+    static function LoadMoreSearchPack($text, $offset = 0)
+    {
+        $limit = 15;
+        $next_offset = $limit + $offset;
+
+        $meta_data = $text . "@" . $next_offset."@".$limit;
+
+
+        //make token
+        $token =  Helper::OpenSSLEncrypt($meta_data);
+
+        // Replace /  with `bikar`
+        $token = str_replace('/', 'bikar', $token);
+
+        return $token = str_replace('+', 'sulp', $token);
+
+    }
+
+
+    //encrypt token for next load comments
+    static function LoadMoreSearchUnPack($token)
+    {
+        $token = str_replace('sulp', '+', $token);
+        $token = str_replace('bikar', '/', $token);
+
+        $token = Helper::OpenSSLDecrypt($token);
+
+
+
+        $meta_data = explode("@", $token);
+
+        return (object)[
+            'text' => $meta_data[0],
             'next_offset' => (integer)$meta_data[1],
             'limit' => (integer)$meta_data[2],
         ];

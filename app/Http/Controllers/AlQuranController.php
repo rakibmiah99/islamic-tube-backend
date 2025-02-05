@@ -16,6 +16,50 @@ class AlQuranController extends Controller
         return Http::baseUrl('http://api.alquran.cloud/v1');
     }
 
+
+    public function bangla(){
+        return Cache::remember('alquran-bangla', now()->addHours(40), function () {
+            $response = $this->request()->get('/quran/bn.bengali');
+            if ($response->status() == 200) {
+                $data = $response->json()['data']['surahs'];
+                $data = collect($data);
+                return $data->flatMap->ayahs->map(function ($ayah) {
+                    return [
+                        'number' => $ayah['number'],
+                        'number_in_surah' => $ayah['numberInSurah'],
+                        'text_in_bn' => $ayah['text'],
+                    ];
+                });
+            }
+        });
+    }
+
+    public function audio()
+    {
+        return Cache::remember('alquran-audio', now()->addHours(40), function () {
+            $response = $this->request()->get('/quran/ar.alafasy');
+            if ($response->status() == 200) {
+                $data = $response->json()['data']['surahs'];
+                $data = collect($data);
+                return $data->flatMap->ayahs->map(function ($ayah) {
+                    return [
+                        'number' => $ayah['number'],
+                        'number_in_surah' => $ayah['numberInSurah'],
+                        'juz' => $ayah['juz'],
+                        'manzil' => $ayah['manzil'],
+                        'page' => $ayah['page'],
+                        'ruku' => $ayah['ruku'],
+                        'hizb_quarter' => $ayah['hizbQuarter'],
+                        'sajda' => json_encode($ayah['sajda']),
+                        'text_in_ar' => $ayah['text'],
+                        'audio_in_ar' => $ayah['audio'],
+                        'audio_in_ar_secondary' => $ayah['audioSecondary'][0] ?? null,
+                    ];
+                });
+            }
+        });
+    }
+
     public function index()
     {
         $response = $this->request()->get('/edition/language/bn');
@@ -33,22 +77,24 @@ class AlQuranController extends Controller
         $data = [];
         if ($response->status() == 200) {
             $data = collect($response->json()['data'])->map(function ($item) {
+//                return $item;
                 $surah_number = $item['number'];
                 $bangla_info = $this->surah_name_bangla[$surah_number];
 
                 return [
                     'number' => $item['number'],
-                    'arabic_name' => $item['name'],
-                    'english_name' => $item['englishName'],
-                    'bangla_name' => $bangla_info['name'],
-                    'bangla_name_translation' => $bangla_info['translation_name'],
                     'number_of_ayahs' => $item['numberOfAyahs'],
                     'revelation_type' => $item['revelationType'],
+                    'name_in_ar' => $item['name'],
+                    'name_in_en' => $item['englishName'],
+                    'name_in_bn' => $bangla_info['name'],
+                    'translate_in_bn' => $bangla_info['translation_name'],
+                    'translate_in_en' => $item['englishNameTranslation'],
                 ];
             });
         }
 
-        return Helper::ApiResponse('', $data);
+        return $data;
     }
     public function getSurahAyahs($surah_number)
     {
