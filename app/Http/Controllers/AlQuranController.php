@@ -21,15 +21,23 @@ class AlQuranController extends Controller
         return Cache::remember('alquran-bangla', now()->addHours(40), function () {
             $response = $this->request()->get('/quran/bn.bengali');
             if ($response->status() == 200) {
-                $data = $response->json()['data']['surahs'];
-                $data = collect($data);
-                return $data->flatMap->ayahs->map(function ($ayah) {
+                $data = collect($response->json()['data']['surahs']);
+                return $data->flatMap->ayahs->map(function ($ayahs) {
                     return [
-                        'number' => $ayah['number'],
-                        'number_in_surah' => $ayah['numberInSurah'],
-                        'text_in_bn' => $ayah['text'],
+                        'number' => $ayahs['number'],
+                        'number_in_surah' => $ayahs['numberInSurah'],
+                        'text_in_bn' => $ayahs['text'],
                     ];
                 });
+            }
+        });
+    }
+    public function english(){
+        return Cache::remember('alquran-english', now()->addHours(40), function () {
+            $response = $this->request()->get('/quran/en.asad');
+            if ($response->status() == 200) {
+                $data = $response->json()['data']['surahs'];
+                return $data;
             }
         });
     }
@@ -43,17 +51,16 @@ class AlQuranController extends Controller
                 $data = collect($data);
                 return $data->flatMap->ayahs->map(function ($ayah) {
                     return [
-                        'number' => $ayah['number'],
-                        'number_in_surah' => $ayah['numberInSurah'],
-                        'juz' => $ayah['juz'],
-                        'manzil' => $ayah['manzil'],
-                        'page' => $ayah['page'],
-                        'ruku' => $ayah['ruku'],
-                        'hizb_quarter' => $ayah['hizbQuarter'],
-                        'sajda' => json_encode($ayah['sajda']),
-                        'text_in_ar' => $ayah['text'],
-                        'audio_in_ar' => $ayah['audio'],
-                        'audio_in_ar_secondary' => $ayah['audioSecondary'][0] ?? null,
+                        'condition' => [
+                            'number' => $ayah['number'],
+                            'number_in_surah' => $ayah['numberInSurah'],
+                        ],
+                        'data' => [
+                            'text_in_ar' => $ayah['text'],
+                            'audio_in_ar' => $ayah['audio'],
+                            'audio_in_ar_secondary' => $ayah['audioSecondary'][0] ?? null,
+                        ]
+
                     ];
                 });
             }
@@ -77,7 +84,6 @@ class AlQuranController extends Controller
         $data = [];
         if ($response->status() == 200) {
             $data = collect($response->json()['data'])->map(function ($item) {
-//                return $item;
                 $surah_number = $item['number'];
                 $bangla_info = $this->surah_name_bangla[$surah_number];
 

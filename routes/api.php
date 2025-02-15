@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlQuranController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\QuranController;
 use App\Http\Controllers\UserPlayListController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
@@ -36,13 +37,23 @@ Route::prefix('user')->group(function (){
    Route::post('/login', [AuthController::class, 'login']);
 });
 
+
+// for testing
 Route::prefix('/al-quran')->group(function () {
     Route::get('/audio', [AlQuranController::class, 'audio']);
     Route::get('/bangla', [AlQuranController::class, 'bangla']);
+    Route::get('/english', [AlQuranController::class, 'english']);
     Route::get('/edition', [AlquranController::class, 'index']);
     Route::get('/surah', [AlquranController::class, 'getAllSurah']);
     Route::get('/surah/{surah_number}/ayahs', [AlquranController::class, 'getSurahAyahs']);
 });
+
+
+Route::prefix('quran')->group(function () {
+    Route::get('/surah', [QuranController::class, 'getSurahs']);
+    Route::get('/surah/{id}/details', [QuranController::class, 'surahDetails']);
+});
+
 
 Route::prefix('/youtube')->group(function () {
     Route::get('/run', [\App\Http\Controllers\YoutubeApiController::class, 'run']);

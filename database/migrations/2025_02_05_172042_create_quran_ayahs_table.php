@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('quran_ayahs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('surah_number');
             $table->unsignedInteger('number');
             $table->unsignedInteger('number_in_surah');
             $table->unsignedInteger('juz')->comment('para');
