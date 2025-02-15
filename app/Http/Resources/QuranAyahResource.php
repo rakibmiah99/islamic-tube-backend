@@ -18,6 +18,7 @@ class QuranAyahResource extends JsonResource
             'surah_number' => $this['surah_number'],
             'number' => $this['number'],
             'number_in_surah' => $this['number_in_surah'],
+            'juz' => $this['juz'],
             'manzil' => $this['manzil'],
             'page' => $this['page'],
             'ruku' => $this['ruku'],
