@@ -31,10 +31,9 @@ Route::middleware('auth:sanctum')->group(function (){
 });
 
 
-
-
 Route::prefix('user')->group(function (){
    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/by-token/{token}', [AuthController::class, 'getUserByToken']);
 });
 
 
