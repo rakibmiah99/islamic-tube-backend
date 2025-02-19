@@ -115,7 +115,9 @@ class VideoController extends Controller
     function comment($slug, VideoCommentRequest $request)
     {
 
-        $video = Video::where('slug', $slug)->select('id')->firstOrFail();
+        $video_query = Video::where('slug', $slug)->select('id');
+        $video = $video_query->firstOrFail();
+
         $video_id = $video->id;
         $user_id = auth()->id();
         $body = $request->input('body');
@@ -126,16 +128,23 @@ class VideoController extends Controller
         ]);
 
         $comment =  CommentResource::make($comment);
-        return Helper::ApiResponse('Comment created!', $comment);
+        return Helper::ApiResponse('Comment created!', [
+            'comment' => $comment,
+            'total_comment' => $video->comments()->count('id')
+        ]);
     }
 
     public function like($slug)
     {
-        $video = Video::where('slug', $slug)->withCount('likes')->firstOrFail();
+        $query = Video::where('slug', $slug)->withCount('likes');
+
+        $video = $query->firstOrFail();
         $video_id = $video->id;
         $user_id = auth()->id();
         $condition = ['user_id' => $user_id, 'video_id' => $video_id];
-        $video_reaction = VideoReaction::where($condition)->first();
+
+        $video_reaction_query = VideoReaction::where($condition);
+        $video_reaction = $video_reaction_query->first();
         $reaction = 'l'; // l = like
         if($video_reaction && $video_reaction?->reaction == 'l'){
             $reaction = 'n'; // n = none
@@ -144,17 +153,22 @@ class VideoController extends Controller
         VideoReaction::updateOrCreate($condition, ['reaction' => $reaction]);
 
         return Helper::ApiResponse('', [
-            'like' => $video_reaction->reaction === 'n',
-            'video_likes_count' => $video->likes_count,
+            'like' => $video_reaction_query->first()->reaction === 'l',
+            'dislike' => $video_reaction_query->first()->reaction === 'd',
+            'video_likes_count' => $query->first()->likes_count,
         ]);
     }
     public function dislike($slug)
     {
-        $video = Video::where('slug', $slug)->withCount('likes')->firstOrFail();
+        $query = Video::where('slug', $slug)->withCount('likes');
+
+        $video = $query->firstOrFail();
         $video_id = $video->id;
         $user_id = auth()->id();
         $condition = ['user_id' => $user_id, 'video_id' => $video_id];
-        $video_reaction = VideoReaction::where($condition)->first();
+
+        $video_reaction_query = VideoReaction::where($condition);
+        $video_reaction = $video_reaction_query->first();
         $reaction = 'd'; // l = like
         if($video_reaction && $video_reaction?->reaction == 'd'){
             $reaction = 'n'; // n = none
@@ -163,8 +177,9 @@ class VideoController extends Controller
         VideoReaction::updateOrCreate($condition, ['reaction' => $reaction]);
 
         return Helper::ApiResponse('', [
-            'dislike' => $video_reaction->reaction === 'n',
-            'video_likes_count' => $video->likes_count,
+            'like' => $video_reaction_query->first()->reaction === 'l',
+            'dislike' => $video_reaction_query->first()->reaction === 'd',
+            'video_likes_count' => $query->first()->likes_count,
         ]);
     }
 
