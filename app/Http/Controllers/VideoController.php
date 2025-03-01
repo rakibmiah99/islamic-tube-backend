@@ -7,8 +7,10 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\VideoDetailsResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Comment;
+use App\Models\UserWatchControl;
 use App\Models\Video;
 use App\Models\VideoReaction;
+use App\Models\VideoWatchCount;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
 
@@ -16,14 +18,35 @@ class VideoController extends Controller
 {
     public function allVideos(Request $request)
     {
+
+
         $limit = $request->input('limit', 24);
         $offset = $request->input('offset', 0);
 
 
-        $videos = Video::withSum('watch_counts', 'watch_count')
+        $videos = Video::watchControl()->withSum('watch_counts', 'watch_count')
             ->limit($limit)
             ->offset($offset)
             ->get();
+
+
+        /*এটি পরবর্তিতে প্রজেক্ট পাবলিশ এর আগে কিউ তে রান করাটা প্রয়োজন*/
+        try{
+            $video_ids = $videos->pluck('id')->toArray();
+            $date = date('Y-m-d');
+            $ip = $request->ip();
+            $user_id = auth()->check() ? auth()->id() : null;
+            UserWatchControl::insert([
+                'user_id' => $user_id,
+                'video_ids' => json_encode($video_ids),
+                'ip_address' => $ip,
+                'watch_date' => $date,
+            ]);
+        }
+        catch (\Exception $exception){
+            dd($exception->getMessage());
+        }
+
 
         $next_load = $offset + $limit;
         $next_load_url = route('all-videos', ['offset' => $next_load]);
@@ -71,11 +94,30 @@ class VideoController extends Controller
 
     function videoDetail($slug)
     {
+        $ip = request()->ip();
+        $date = date('Y-m-d');
+
         $video = Video::where('slug', $slug)
             ->withSum('watch_counts', 'watch_count')
             ->withCount('likes')
             ->withCount('comments')
             ->firstOrFail();
+
+
+        /*এটি পরবর্তিতে প্রজেক্ট পাবলিশ এর আগে কিউ তে রান করাটা প্রয়োজন*/
+        try{
+            $watchRecord = VideoWatchCount::firstOrCreate(
+                ['video_id' => $video->id, 'ip' => $ip, 'watch_date' => $date],
+                ['watch_count' => 0]
+            );
+
+            $watchRecord->increment('watch_count');
+
+        }
+        catch (\Exception $exception){
+            dd($exception->getMessage());
+        }
+
 
         $video_details = VideoDetailsResource::make($video);
         return Helper::ApiResponse('', $video_details);

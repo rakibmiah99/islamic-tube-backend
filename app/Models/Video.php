@@ -3,12 +3,28 @@
 namespace App\Models;
 
 use App\Utils\Helper;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
 {
     use HasFactory;
+
+
+    public function scopeWatchControl(Builder $query): Builder
+    {
+        $video_ids = UserWatchControl::where('ip_address', request()->ip())
+            ->pluck('video_ids')->map(function ($ids) {
+                return json_decode($ids);
+            })
+            ->flatten()
+            ->unique()
+            ->values()
+            ->all();
+
+        return $query->whereNotIn('id', $video_ids);
+    }
 
 
     public function watch_counts()
@@ -46,7 +62,7 @@ class Video extends Model
 
     public static function relatedVideosData($tag_ids, $skip_video_id, $offset = 0, $limit = 15)
     {
-        $videos = Video::withSum('watch_counts', 'watch_count')
+        $videos = Video::watchControl()->withSum('watch_counts', 'watch_count')
         ->where('id', '!=', $skip_video_id)
         ->whereHas('tags', function ($query) use ($tag_ids) {
             $query->whereIn('tags.id', $tag_ids);

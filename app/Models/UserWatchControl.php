@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VideoWatchCount extends Model
+class UserWatchControl extends Model
 {
     protected $guarded = [];
 }
