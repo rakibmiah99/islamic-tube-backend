@@ -13,4 +13,11 @@ class UserPlayList extends Model
     public function videos(){
         return $this->hasManyThrough(Video::class, UserPlayListVideo::class, 'user_play_list_id', 'id', 'id', 'video_id');
     }
+
+
+    public function play_list_videos()
+    {
+        return $this->hasMany(UserPlayListVideo::class, 'user_play_list_id', 'id');
+    }
+
 }

@@ -7,6 +7,7 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\VideoDetailsResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Comment;
+use App\Models\UserVideoWatchHistory;
 use App\Models\UserWatchControl;
 use App\Models\Video;
 use App\Models\VideoReaction;
@@ -35,16 +36,18 @@ class VideoController extends Controller
             $video_ids = $videos->pluck('id')->toArray();
             $date = date('Y-m-d');
             $ip = $request->ip();
-            $user_id = auth()->check() ? auth()->id() : null;
+            $user_id = Helper::GetUserID();
+            $user_agent = $request->header('User-Agent');
             UserWatchControl::insert([
                 'user_id' => $user_id,
                 'video_ids' => json_encode($video_ids),
                 'ip_address' => $ip,
                 'watch_date' => $date,
+                'user_agent' => $user_agent,
             ]);
         }
         catch (\Exception $exception){
-            dd($exception->getMessage());
+//            dd($exception->getMessage());
         }
 
 
@@ -94,6 +97,7 @@ class VideoController extends Controller
 
     function videoDetail($slug)
     {
+
         $ip = request()->ip();
         $date = date('Y-m-d');
 
@@ -106,12 +110,22 @@ class VideoController extends Controller
 
         /*এটি পরবর্তিতে প্রজেক্ট পাবলিশ এর আগে কিউ তে রান করাটা প্রয়োজন*/
         try{
+
+            //control watch count
             $watchRecord = VideoWatchCount::firstOrCreate(
                 ['video_id' => $video->id, 'ip' => $ip, 'watch_date' => $date],
                 ['watch_count' => 0]
             );
 
             $watchRecord->increment('watch_count');
+
+            //save in history
+            if (Helper::CheckUser()){
+                UserVideoWatchHistory::updateOrCreate(
+                    ['user_id' => Helper::GetUserID(), 'video_id' => $video->id],
+                    ['watched_at' => date('Y-m-d H:i:s')]
+                );
+            }
 
         }
         catch (\Exception $exception){

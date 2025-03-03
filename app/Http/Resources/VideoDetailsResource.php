@@ -17,6 +17,7 @@ class VideoDetailsResource extends JsonResource
     {
         $related_videos = Video::relatedVideosData($this->tags->pluck('id'), $this->id);
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
             'thumbnail' => $this->thumbnail,

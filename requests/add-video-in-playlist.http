@@ -1,0 +1,9 @@
+POST http://127.0.0.1:8000/api/user/playlist/add-video
+Accept: application/json
+Authorization: Bearer 17|5hPMcobcanXFv0QrMMtJW0W6EKqgw6sDyg20i03Pf0d5b5b5
+Content-Type: application/json
+
+{
+    "video_id": 1,
+    "playlist_id": 1
+}

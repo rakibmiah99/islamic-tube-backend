@@ -109,4 +109,20 @@ class Helper
         return $decrypted;
     }
 
+
+    public static function GetUser()
+    {
+        return auth('sanctum')->check() ? auth('sanctum')->user() : null;
+    }
+
+    public static function GetUserID()
+    {
+        return auth('sanctum')->check() ? auth('sanctum')->id() : null;
+    }
+
+    public static function CheckUser()
+    {
+        return auth('sanctum')->check();
+    }
+
 }

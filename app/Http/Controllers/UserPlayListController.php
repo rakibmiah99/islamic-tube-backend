@@ -13,8 +13,30 @@ class UserPlayListController extends Controller
 
     public function get()
     {
+        $video_id = \request()->get('video_id');
         $user_id = auth()->id();
-        $data = UserPlayList::where('user_id', $user_id)->get();
+        $data = UserPlayList::where('user_id', $user_id)
+            ->with(['play_list_videos' => function ($query) use ($video_id) {
+                if ($video_id) {
+                    $query->where('video_id', $video_id);
+                }
+            }])
+            ->get()
+            ->map(function ($playlist) use ($video_id){
+            $data = [
+                'id' => $playlist->id,
+                'user_id' => $playlist->user_id,
+                'name' => $playlist->name,
+            ];
+
+
+            if ($video_id){
+                 $is_in_list =  (boolean) $playlist->play_list_videos->isNotEmpty();
+                 $data['video_in_list'] = $is_in_list;
+            }
+
+            return $data;
+        });
         return Helper::ApiResponse('', $data);
     }
 
@@ -80,12 +102,14 @@ class UserPlayListController extends Controller
         ];
 
         if($playlist_video->where($condition)->exists()){
-            return Helper::ApiResponse('video already exist!', [], 409, false);
+            $playlist_video->where($condition)->delete();
+
+            return Helper::ApiResponse('video removed from list successfully!');
         }
 
         try {
             $playlist_video->insert($condition);
-            return Helper::ApiResponse('video inserted successfully', $playlist_video);
+            return Helper::ApiResponse('video inserted in list successfully', $playlist_video->where($condition)->first());
         }
         catch (\Exception $exception){
             return Helper::ApiResponse('error', [], 500, false);

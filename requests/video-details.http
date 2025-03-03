@@ -1,3 +1,4 @@
 GET http://127.0.0.1:8000/api/video/siletbaseer-jnz-saifullah-hujurer-kanndhe-cirar-bsta-abdul-hi-muhammad-saifullah
 Accept: application/json
+Authorization: Bearer 17|5hPMcobcanXFv0QrMMtJW0W6EKqgw6sDyg20i03Pf0d5b5b5
 
