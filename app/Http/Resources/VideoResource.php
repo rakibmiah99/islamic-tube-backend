@@ -18,6 +18,8 @@ class VideoResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'thumbnail' => $this->thumbnail,
+            'thumbnail_sm' => $this->thumbnail_sm ?? $this->thumbnail,
+            'thumbnail_md' => $this->thumbnail_md ?? $this->thumbnail,
             'watch_count' => (integer)$this->watch_counts_sum_watch_count,
             'published_at' => $this->published_at
         ];
