@@ -15,15 +15,21 @@ class UserPlayListController extends Controller
     {
         $video_id = \request()->get('video_id');
         $user_id = auth()->id();
-        $data = UserPlayList::where('user_id', $user_id)
-            ->with(['play_list_videos' => function ($query) use ($video_id) {
+        $query = UserPlayList::where('user_id', $user_id);
+
+        if($video_id){
+            $query->with(['play_list_videos' => function ($query) use ($video_id) {
                 if ($video_id) {
                     $query->where('video_id', $video_id);
                 }
-            }])
-            ->get()
-            ->map(function ($playlist) use ($video_id){
-            $data = [
+            }]);
+        }
+        else{
+            $query->withCount(['play_list_videos as total_videos']);
+        }
+
+        $data = $query->get()->map(function ($playlist) use ($video_id){
+            $new_data = [
                 'id' => $playlist->id,
                 'user_id' => $playlist->user_id,
                 'name' => $playlist->name,
@@ -32,10 +38,14 @@ class UserPlayListController extends Controller
 
             if ($video_id){
                  $is_in_list =  (boolean) $playlist->play_list_videos->isNotEmpty();
-                 $data['video_in_list'] = $is_in_list;
+                $new_data['video_in_list'] = $is_in_list;
+            }
+            else{
+                $new_data['thumbnail'] = $playlist->videos?->first()?->thumbnail;
+                $new_data['total_videos'] = $playlist->total_videos;
             }
 
-            return $data;
+            return $new_data;
         });
         return Helper::ApiResponse('', $data);
     }
